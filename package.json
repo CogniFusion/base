@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@prisma/client": "^5.4.2",
+    "@prisma/client": "^5.9.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "lucide-react": "^0.287.0",
@@ -27,7 +27,7 @@
     "@types/react-dom": "^18",
     "autoprefixer": "^10",
     "postcss": "^8",
-    "prisma": "^5.4.2",
+    "prisma": "^5.9.0",
     "tailwindcss": "^3",
     "typescript": "^5"
   }
