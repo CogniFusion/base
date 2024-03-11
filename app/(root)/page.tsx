@@ -58,12 +58,7 @@ export default function Home() {
 
     useEffect(() => {
         if (!userId) handleAuth();
-        return () => {
-            dispatch(setUserId(""));
-            dispatch(setUserName(""));
-            dispatch(setOnboarded(false));
-        }
-    }, [])
+    }, [userId])
 
     return (
         <>

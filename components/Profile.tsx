@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { UserValidation } from "@/lib/validations/user";
 import { updateUser } from "@/app/api/user";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUserId, selectUserName, setOnboarded, setUserId } from "@/redux/features/state-slice";
+import { selectUserId, selectUserName, setOnboarded, setUserId, setUserName } from "@/redux/features/state-slice";
 
 const Profile = () => {
     const pathname = usePathname();
@@ -43,7 +43,7 @@ const Profile = () => {
             onboarded: true,
         };
         dispatch(setUserId(currentUser.id));
-        dispatch(setUserId(currentUser.username));
+        dispatch(setUserName(currentUser.username));
         dispatch(setOnboarded(true));
         await updateUser(currentUser);
 
