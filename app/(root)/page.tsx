@@ -1,49 +1,89 @@
-import { fetchUser } from "@/lib/actions/user.actions"
+"use client";
 
-// Defines a user object with a hardcoded id property. Just for demo purposes
-const user = {
-    id: "1"
-}
+import { useDispatch, useSelector } from "react-redux";
+import {
+    setUserId,
+    selectUserId,
+    selectIsOnboarded,
+    setUserName,
+    setOnboarded,
+    selectUserName,
+} from "@/redux/features/state-slice";
+import Image from "next/image";
 
-interface UserData {
-    id: string;
-    name: string;
-    username: string;
-    onboarded: boolean;
-}
+import { ReactNode, useEffect, useState } from "react";
+import { redirect } from "next/navigation";
+import { authService } from "@/app/api/auth";
+import { fetchUser } from "../api/user";
+import { SignOutButton } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
-/**
- * Asynchronously retrieves user data based on the provided id.
- *
- * @param {string} id - The id of the user to retrieve data for.
- * @return {Promise<UserData>} A promise that resolves to the user data.
- */
-const getUserData = async (id: string): Promise<UserData> => {
-    const userRawData: any = await fetchUser(id);
-    return {
-        id,
-        name: userRawData ? userRawData.name : "User not found",
-        username: userRawData ? userRawData.username : "User not found",
-        onboarded: userRawData ? userRawData.onboarded : false
+
+export default function Home() {
+    const router = useRouter();
+    const [letSignIn, setLetSignIn] = useState(false);
+    const userId = useSelector(selectUserId);
+    const userName = useSelector(selectUserName);
+    const onboarded = useSelector(selectIsOnboarded);
+    const dispatch = useDispatch();
+
+    const handleAuth = async () => {
+        try {
+            const authId = await authService();
+            if (authId) {
+                const authUser = await fetchUser(authId);
+                if (authUser) {
+                    dispatch(setUserId(authUser.id));
+                    dispatch(setUserName(authUser.username));
+                    dispatch(setOnboarded(authUser.onboarded));
+                } else {
+                    dispatch(setUserId(authId));
+                }
+            } else setLetSignIn(true);
+        } catch (error) {
+            console.error(error);
+        }
     };
-};
 
-/**
- * Asynchronous function for rendering the Home component.
- *
- * @return {Promise<JSX.Element>} The main component for the Home page.
- */
-export default async function Home(): Promise<JSX.Element> {
-    try {
-        const userData = await getUserData(user.id);
+    useEffect(() => {
+        if (letSignIn) {
+            setLetSignIn(false);
+            redirect("/sign-in");
+        }
+    }, [letSignIn]);
 
-        return (
-            <main>
-                <div>Title: {userData.name}</div>
-                <div>Username: {userData.username}</div>
-            </main>
-        );
-    } catch (error) {
-        throw new Error(`Failed to fetch user: ${error}`);
-    }
+    useEffect(() => {
+        if (userId && onboarded === false) redirect("/onboarding");
+    }, [onboarded, userId])
+
+    useEffect(() => {
+        if (!userId) handleAuth();
+    }, [userId])
+
+    return (
+        <>
+            <section className="main-container">
+                <div className="w-full">
+                    <section className="flex flex-row justify-between m-12">
+                        <h1 className="head-text">
+                            Welcome <strong>{userName as ReactNode}</strong>
+                        </h1>
+
+                        <SignOutButton signOutCallback={() => router.push("/sign-in")}>
+                            <div className="flex items-center cursor-pointer">
+                                <Image
+                                    src="/assets/logout.svg"
+                                    alt="logout"
+                                    width={24}
+                                    height={24}
+                                />
+                                <p className="text-teal-400 ml-2 font-semibold">Sign Out</p>
+                            </div>
+                        </SignOutButton>
+
+                    </section>
+                </div>
+            </section>
+        </>
+    );
 }
