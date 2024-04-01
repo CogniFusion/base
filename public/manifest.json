@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "CogniFusion",
+  "version": "1.0.0",
+  "icons": {
+    "32": "assets/cognifusion.png"
+  },
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": ["activeTab"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  }
+}
