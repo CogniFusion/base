@@ -22,19 +22,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectUserId, selectUserName, setOnboarded, setUserId, setUserName } from "@/redux/features/state-slice";
 
 const Profile = () => {
+    const userName = String(useSelector(selectUserName));
     const pathname = usePathname();
     const router = useRouter();
     const dispatch = useDispatch();
     let userId = ""
     userId = useSelector(selectUserId);
+
     const form = useForm({
         defaultValues: {
             name: "",
-            username: "",
+            username: userName,
         },
     });
 
+
     const onSubmit = async (values: z.infer<typeof UserValidation>) => {
+
         const currentUser = {
             id: userId,
             name: values.name,
@@ -60,18 +64,20 @@ const Profile = () => {
                 <FormField
                     control={form.control}
                     name="username"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                                <Input placeholder="shadcn" {...field} />
-                            </FormControl>
-                            <FormDescription>
-                                This is your public display name.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                    render={({ field }) => {
+                        return (
+                            <FormItem>
+                                <FormLabel>Username</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Enter your username" {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                    This is your public display name.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )
+                    }}
                 />
                 <Button type="submit">Submit</Button>
             </form>
