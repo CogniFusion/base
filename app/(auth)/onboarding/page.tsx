@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { redirect } from "next/navigation";
 import { selectUserId } from "@/redux/features/state-slice";
-import Profile from "@/components/Profile";
+import Profile from "../../(root)/profile/page";
 const Page = () => {
     const userId = useSelector(selectUserId);
     debugger
