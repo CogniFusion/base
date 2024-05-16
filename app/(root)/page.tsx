@@ -68,6 +68,25 @@ export default function Home() {
         if (!userId) handleAuth();
     }, [userId])
 
+    useEffect(() => {
+        const handleMessage = (message: { data: any; }) => {
+            // Process the message received from the Chrome extension
+            console.log("Message received :", message.data);
+
+            // You can generate text and image based on the message here
+        };
+
+        window.addEventListener('message', (event) => {
+            if (event.source === window && event.data && event.data.from === 'ChromeExtension') {
+                handleMessage(event.data);
+            }
+        });
+
+        return () => {
+            window.removeEventListener('message', handleMessage);
+        };
+    }, []);
+
     return (
         <main>
             <section className="main-container">
